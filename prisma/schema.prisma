@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Companhias {
+  id                 Int      @id @default(autoincrement())
+  nome               String   @unique
+  voos               Voos[]
+}
+
+model Voos {
+  id                 Int      @id @default(autoincrement())
+  saida              DateTime @default(now())
+  chegada            DateTime @default(now())
+  aeroportoOrigen    String
+  aeroportoDestino   String
+  quantidadeAssentos Int
+  assentos           Assento[]
+  preco              Float
+  companhia          Companhias @relation(fields: [companhiaId], references: [id])
+  companhiaId        Int
+  compra             Compra[]
+}
+
+model Assento {
+  id                 Int      @id 
+  voo                Voos     @relation(fields: [vooId], references: [id])
+  vooId              Int
+  nome               String
+}
+
+model Compra {
+  id                 Int      @id @default(autoincrement())
+  nome               String
+  voo                Voos     @relation(fields: [vooId], references: [id])
+  vooId              Int
+  assentos           Int
+  horaCompra         DateTime @default(now())
+}
